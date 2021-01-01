@@ -1,0 +1,133 @@
+<canvas height="600" id="canvas" width="1200"></canvas>
+
+<script type="text/javascript">
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    ctx.translate(0, 600);
+
+    const img_dir = 'img/';
+
+    const smallUnit = {
+        mainImg: [
+            {
+                src: img_dir + 'smallunit.png',
+                coeficient: 1
+            }
+        ],
+        mainBottom: [
+            {
+                src: img_dir + 'smallunit.png',
+                coeficient: 1
+            }
+        ],
+        mainTop: [
+            {
+                src: img_dir + 'smallunit.png',
+                coeficient: 1
+            }
+        ],
+        width: 38
+    }
+
+    const largeUnit = {
+        mainImg: [
+            {
+                src: img_dir + 'largeunit.png',
+                coeficient: 1
+            }
+        ],
+        mainBottom: [
+            {
+                src: img_dir + 'largeunit.png',
+                coeficient: 1
+            }
+        ],
+        mainTop: [
+            {
+                src: img_dir + 'largeunit.png',
+                coeficient: 1
+            }
+        ],
+        width: 51
+    }
+
+    const doorUnit = {
+        mainImg: [
+            {
+                src: img_dir + 'balkon.png',
+                coeficient: 1
+            }
+        ],
+        mainBottom: [
+            {
+                src: img_dir + 'doorunit.png',
+                coeficient: 1
+            }
+        ],
+        mainTop: [
+            {
+                src: img_dir + 'balkon.png',
+                coeficient: 1
+            }
+        ],
+        width: 51
+    }
+
+    const panelka9 = {
+        floorHight: 42,
+        floorCount: 7,
+        doorCount: 3,
+        schema: [smallUnit, largeUnit, largeUnit, doorUnit, largeUnit, largeUnit, smallUnit],
+        block_width: function() {
+            let b_width = 0;
+            this.schema.forEach((item, i, arr) => {
+                b_width += item.width;
+            })
+            return b_width;
+        },
+        first_units_block_width: function(i) {
+            let b_width = 0;
+            this.schema.slice(0, i).forEach((item, i, arr) => {
+                b_width += item.width;
+            })
+            return b_width;
+        },
+        draw: function (ctx, x, y) {
+            //console.log(this.schema)
+            for (let block = 0; block < this.doorCount; block++) {
+                for (let floor = 1; floor <= this.floorCount; floor++) {
+                    this.schema.forEach((item, i, arr) => {
+                        const img = new Image();
+                        let left_all_width = this.first_units_block_width(i)
+                        const width = item.width + 1;
+                        const height = this.floorHight;
+                        const block_width = this.block_width()
+                        console.log(this.floorHight)
+
+                        console.log(x + i * width, (y + height) * -1, width, height)
+                        img.onload = function () {
+                            ctx.drawImage(
+                                img,
+                                x + left_all_width + block_width * block,
+                                (y + height * floor) * -1,
+                                width,
+                                height + 1
+                            );
+                        };
+
+                        if(floor==1){
+                            img.src = item.mainBottom[0].src;
+                        } else {
+                            img.src = item.mainImg[0].src;
+                        }
+                    })
+                }
+            }
+        }
+    }
+
+    window.onload = function () {
+        panelka9.draw(ctx, 0, 0);
+    };
+</script>
